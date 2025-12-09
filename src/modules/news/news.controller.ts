@@ -10,15 +10,24 @@ import {
   HttpStatus,
   Query,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { NewsService } from './news.service';
 import { CreateNewsDto } from './dto/create-news.dto';
 import { UpdateNewsDto } from './dto/update-news.dto';
 import { GetNewsFilterDto } from './dto/get-news-filter.dto';
 import { News } from './entities/news.entity';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @ApiTags('noticias')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('news')
 export class NewsController {
   constructor(private readonly newsService: NewsService) {}
