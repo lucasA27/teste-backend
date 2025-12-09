@@ -5,6 +5,7 @@ import { AppModule } from './../src/app.module';
 
 describe('News (e2e)', () => {
   let app: INestApplication;
+  let authToken: string;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -20,6 +21,21 @@ describe('News (e2e)', () => {
       }),
     );
     await app.init();
+
+    // Create a user and login to get token
+    const userDto = {
+      name: 'Test User',
+      email: 'test@example.com',
+      password: 'password123',
+    };
+
+    await request(app.getHttpServer()).post('/auth/register').send(userDto);
+
+    const loginResponse = await request(app.getHttpServer())
+      .post('/auth/login')
+      .send({ email: userDto.email, password: userDto.password });
+
+    authToken = loginResponse.body.access_token;
   });
 
   afterAll(async () => {
@@ -35,6 +51,7 @@ describe('News (e2e)', () => {
 
       return request(app.getHttpServer())
         .post('/news')
+        .set('Authorization', `Bearer ${authToken}`)
         .send(createNewsDto)
         .expect(201)
         .expect((res) => {
@@ -51,6 +68,7 @@ describe('News (e2e)', () => {
 
       return request(app.getHttpServer())
         .post('/news')
+        .set('Authorization', `Bearer ${authToken}`)
         .send(createNewsDto)
         .expect(400)
         .expect((res) => {
@@ -68,6 +86,7 @@ describe('News (e2e)', () => {
 
       return request(app.getHttpServer())
         .post('/news')
+        .set('Authorization', `Bearer ${authToken}`)
         .send(createNewsDto)
         .expect(400)
         .expect((res) => {
