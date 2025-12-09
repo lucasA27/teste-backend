@@ -10,6 +10,7 @@ Esta é uma API RESTful desenvolvida em NestJS para gerenciar "Notícias" e cons
 - **Docker & Docker Compose**: Containerização e orquestração.
 - **Class Validator**: Validação de dados.
 - **Axios**: Cliente HTTP para integrações externas.
+- **Passport & JWT**: Autenticação e segurança via tokens.
 - **Swagger**: Documentação da API.
 
 ## Estrutura do Projeto e Justificativa
@@ -17,6 +18,8 @@ Esta é uma API RESTful desenvolvida em NestJS para gerenciar "Notícias" e cons
 A estrutura segue o padrão modular do NestJS, reforçada pelo **Repository Pattern** e **Integration Layer** para desacoplamento e testabilidade.
 
 - `src/app.module.ts`: Módulo raiz da aplicação.
+- `src/modules/auth/`: Módulo de autenticação (Login, Registro, JWT).
+- `src/modules/users/`: Módulo de gerenciamento de usuários.
 - `src/modules/news/`: Módulo dedicado à entidade "News" (Notícias).
   - `dto/`: Data Transfer Objects para validação de entrada.
   - `entities/`: Definição da entidade e mapeamento para o banco de dados.
@@ -40,6 +43,27 @@ A estrutura segue o padrão modular do NestJS, reforçada pelo **Repository Patt
 - **Integration Layer**: A comunicação com APIs externas (ViaCEP) é isolada em `src/integrations`. O módulo de domínio `CepModule` consome o `ViaCepModule`, mantendo a lógica de negócio separada dos detalhes de implementação da requisição HTTP.
 - **DTOs & Validação**: Centralização das regras de entrada de dados.
 - **Docker**: Ambiente reproduzível e isolado.
+
+## Autenticação e Segurança
+
+A API utiliza **JWT (JSON Web Token)** para proteger rotas sensíveis.
+
+### Endpoints de Autenticação
+
+- `POST /auth/register`: Cria um novo usuário.
+  - Body: `{ "name": "User", "email": "user@example.com", "password": "123" }`
+- `POST /auth/login`: Autentica um usuário e retorna o token JWT.
+  - Body: `{ "email": "user@example.com", "password": "123" }`
+  - Response: `{ "access_token": "eyJhbGciOiJIUzI1Ni..." }`
+
+### Rotas Protegidas
+
+As rotas de criação, edição e remoção de notícias (`POST`, `PUT`, `DELETE` em `/news`) são protegidas.
+Para acessá-las, envie o token no header `Authorization`:
+
+```
+Authorization: Bearer <seu_token_aqui>
+```
 
 ## Pré-requisitos
 
@@ -83,7 +107,14 @@ A estrutura segue o padrão modular do NestJS, reforçada pelo **Repository Patt
 
 ## Endpoints
 
-### News (Notícias)
+### Autenticação (Auth)
+
+- **POST /auth/register**: Registra um novo usuário.
+  - Body: `{ "name": "string", "email": "string", "password": "string" }`
+- **POST /auth/login**: Realiza login e retorna o token JWT.
+  - Body: `{ "email": "string", "password": "string" }`
+
+### News (Notícias) - **Protegido (Requer Bearer Token)**
 
 - **POST /news**: Cria uma nova notícia.
   - Body: `{ "title": "string", "description": "string" }`
