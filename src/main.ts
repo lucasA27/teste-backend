@@ -18,6 +18,7 @@ async function bootstrap() {
     .setDescription('API RESTful para gerenciamento de notícias')
     .setVersion('1.0')
     .addTag('noticias')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
