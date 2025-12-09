@@ -11,7 +11,9 @@ import {
   Query,
   ParseIntPipe,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 import {
   ApiTags,
   ApiOperation,
@@ -46,6 +48,7 @@ export class NewsController {
   }
 
   @Get()
+  @UseInterceptors(CacheInterceptor)
   @ApiOperation({ summary: 'Listar notícias com paginação e filtros' })
   @ApiResponse({
     status: 200,
