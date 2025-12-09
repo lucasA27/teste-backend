@@ -11,6 +11,7 @@ Esta é uma API RESTful desenvolvida em NestJS para gerenciar "Notícias" e cons
 - **Class Validator**: Validação de dados.
 - **Axios**: Cliente HTTP para integrações externas.
 - **Passport & JWT**: Autenticação e segurança via tokens.
+- **Cache Manager**: Caching em memória para otimização de performance.
 - **Swagger**: Documentação da API.
 
 ## Estrutura do Projeto e Justificativa
@@ -42,6 +43,7 @@ A estrutura segue o padrão modular do NestJS, reforçada pelo **Repository Patt
 - **Repository Pattern**: A camada de serviço (`NewsService`) depende de uma abstração (`INewsRepository`) e não da implementação concreta (TypeORM).
 - **Integration Layer**: A comunicação com APIs externas (ViaCEP) é isolada em `src/integrations`. O módulo de domínio `CepModule` consome o `ViaCepModule`, mantendo a lógica de negócio separada dos detalhes de implementação da requisição HTTP.
 - **DTOs & Validação**: Centralização das regras de entrada de dados.
+- **Caching**: Implementado na listagem de notícias (`GET /news`) para reduzir carga no banco de dados e melhorar tempo de resposta (TTL: 60s).
 - **Docker**: Ambiente reproduzível e isolado.
 
 ## Autenticação e Segurança
