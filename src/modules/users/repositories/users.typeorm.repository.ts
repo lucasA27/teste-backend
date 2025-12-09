@@ -20,7 +20,7 @@ export class UsersTypeOrmRepository implements IUsersRepository {
   async findByEmail(email: string): Promise<User | null> {
     return this.typeOrmRepository.findOne({
       where: { email },
-      select: ['id', 'name', 'email', 'createdAt'],
+      select: ['id', 'name', 'email', 'password', 'createdAt'],
     });
   }
 
