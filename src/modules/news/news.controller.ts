@@ -9,6 +9,7 @@ import {
   HttpCode,
   HttpStatus,
   Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { NewsService } from './news.service';
@@ -31,7 +32,7 @@ export class NewsController {
   })
   @ApiResponse({ status: 400, description: 'Dados inválidos.' })
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createNewsDto: CreateNewsDto) {
+  create(@Body() createNewsDto: CreateNewsDto): Promise<News> {
     return this.newsService.create(createNewsDto);
   }
 
@@ -42,7 +43,9 @@ export class NewsController {
     description: 'Lista de notícias retornada com sucesso.',
   })
   @HttpCode(HttpStatus.OK)
-  findAll(@Query() filterDto: GetNewsFilterDto) {
+  findAll(
+    @Query() filterDto: GetNewsFilterDto,
+  ): Promise<{ data: News[]; total: number; page: number; limit: number }> {
     return this.newsService.findAll(filterDto);
   }
 
@@ -55,8 +58,8 @@ export class NewsController {
   })
   @ApiResponse({ status: 404, description: 'Notícia não encontrada.' })
   @HttpCode(HttpStatus.OK)
-  findOne(@Param('id') id: string) {
-    return this.newsService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number): Promise<News> {
+    return this.newsService.findOne(id);
   }
 
   @Patch(':id')
@@ -68,8 +71,11 @@ export class NewsController {
   })
   @ApiResponse({ status: 404, description: 'Notícia não encontrada.' })
   @HttpCode(HttpStatus.OK)
-  update(@Param('id') id: string, @Body() updateNewsDto: UpdateNewsDto) {
-    return this.newsService.update(+id, updateNewsDto);
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateNewsDto: UpdateNewsDto,
+  ): Promise<News> {
+    return this.newsService.update(id, updateNewsDto);
   }
 
   @Delete(':id')
@@ -77,7 +83,7 @@ export class NewsController {
   @ApiResponse({ status: 204, description: 'Notícia removida com sucesso.' })
   @ApiResponse({ status: 404, description: 'Notícia não encontrada.' })
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: string) {
-    return this.newsService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    return this.newsService.remove(id);
   }
 }

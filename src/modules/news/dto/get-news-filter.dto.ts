@@ -29,7 +29,7 @@ export class GetNewsFilterDto {
 
   @ApiPropertyOptional({
     description: 'Campo para ordenação (id, title, createdAt)',
-    enum: ['id', 'title', 'createdAt'],
+    enum: ['id', 'title', 'description', 'createdAt'],
   })
   @IsOptional()
   @IsString()
